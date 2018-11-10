@@ -43,7 +43,6 @@ if (isset($_POST["editPostID"]) && !empty($_POST["editPostID"])){
     exit();
 }
 
-
 ?>
 
 <!DOCTYPE html>

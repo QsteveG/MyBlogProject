@@ -47,12 +47,12 @@ function getPosts(){
 
             $result = $statement->get_result();
             
-            $res = $result;
+//            $res = $result;
             
-            $counter =$this->countPosts();
-            
-            if ($counter < 0){
-                return true;
+            if ($this->countPosts() <= 0){
+                $statement->free_result();
+                $statement->close();
+                return FALSE;
             }
             
             $tag = '<ul style="list-style-type: none">';
@@ -67,6 +67,8 @@ function getPosts(){
                 $tag .= "<form action=\"./editPost.php\" method=\"POST\">";
                 $tag .= "<button type=\"submit\" name=\"editPostID\" value=\"".$row["ID"]."\">Edit</button>";
                 $tag .= "</form>";
+                //Add form to delete specific POST. Go to "deletePost.php", check the author of the post
+                //to decide if you can delete the post or not
                 $tag .= '</li>';
                 $tag .= '<br>';
             }
