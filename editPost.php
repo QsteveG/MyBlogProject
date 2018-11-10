@@ -12,7 +12,7 @@ $postID = -1;
 if (isset($_POST["editPostID"]) && !empty($_POST["editPostID"])){
 
     if (!$BlogManager->checkUserAuthor($_POST["editPostID"], $_SESSION[ExtraVals::USER_LOGGED])){
-        echo "Your NOT the Author of this post!";
+//        echo "Your NOT the Author of this post!";
         $BlogManager->DBDisconnect();
         header("Location: ./signedin.php?edit_post=".ExtraVals::AUTHOR_MISMATCH);
         exit();

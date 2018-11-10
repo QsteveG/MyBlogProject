@@ -67,6 +67,9 @@ function getPosts(){
                 $tag .= "<form action=\"./editPost.php\" method=\"POST\">";
                 $tag .= "<button type=\"submit\" name=\"editPostID\" value=\"".$row["ID"]."\">Edit</button>";
                 $tag .= "</form>";
+                $tag .= "<form action=\"./deletePost.php\" method=\"POST\">";
+                $tag .= "<button type=\"submit\" name=\"deletePostID\" value=\"".$row["ID"]."\">Delete</button>";
+                $tag .= "</form>";
                 //Add form to delete specific POST. Go to "deletePost.php", check the author of the post
                 //to decide if you can delete the post or not
                 $tag .= '</li>';
