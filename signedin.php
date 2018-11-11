@@ -53,7 +53,7 @@
                     break;
                 
                 case ExtraVals::AUTHOR_MISMATCH:
-                    echo "<p>You're not the authore or this post! You cannot edit the post</p>";
+                    echo "<p>You're not the author of this post! You can't edit it</p>";
                     break;
                 
                 case ExtraVals::POST_ERROR :
@@ -68,10 +68,37 @@
                         break;
                 }
             }
+            
+            if (isset($_GET["delete_post"])){
+                $val = $_GET["delete_post"];
+                
+                switch ($val) {
+                    case ExtraVals::AUTHOR_MISMATCH:
+                        echo "<p>You're not the author of this post. You can't delete it!</p>";
+                    break;
+                
+                    case ExtraVals::DELETE_SUCCESS:
+                        echo "<p>Delete succeeded</p>";
+                    break;
+                
+                    case ExtraVals::DELETE_FAIL:
+                        echo "<p>Delete failed</p>";
+                    break;
+                
+                    case ExtraVals::NOT_SUBMITTED:
+                        echo "<p>You didn't click the delete button.</p>";
+                    break;
+                
+                    default:
+                        break;
+                }
+            }
         ?>
         
         <?php
-            $BlogManager->getPosts();
+            if(!$BlogManager->getPosts()){
+                echo "error get posts";
+            }
         ?>
         
     </body>

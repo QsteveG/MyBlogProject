@@ -19,39 +19,49 @@ function __construct() {
 }
 
 private function countPosts(){
-    $query = "SELECT COUNT (ID) as counter FROM posts WHERE post_type='post'";
+//    echo "countPosts";
+//    if($this->sqliInstance == NULL){
+//        echo "Sqli instance == NULL";
+//    }
+    
+    $query = "SELECT COUNT(ID) as counter FROM posts WHERE post_type='post'";
     
     if ($statement = $this->sqliInstance->prepare($query)){
-        $statement->execute();
+        if(!$statement->execute()){
+//            echo "error execute";
+        }
         $res = $statement->get_result();
         return $res->fetch_assoc()["counter"];
+    }else{
+//        echo "Prepared error";
     }
 }
 
 function getPosts(){
-//     if ($this->sqliInstance == null){
-//        return false;
-//    }
+     if ($this->sqliInstance == NULL){
+        echo "instance == NULL";
+        return false;
+    }
     
-    $query = "SELECT ID, author, post_type, date_creation, title, content FROM posts
-                WHERE post_type='post' 
-                ORDER BY date_creation DESC";
+    $query = "SELECT * FROM posts WHERE post_type='post' ORDER BY date_creation DESC";
     
     $res = FALSE;
     
     if ($statement = $this->sqliInstance->prepare($query)){
         if (!$statement->execute()){
-//            echo "Execute error";
+            echo "Execute error";
             $res = FALSE;
         }else{
 
             $result = $statement->get_result();
             
+            $counter = $this->countPosts();
 //            $res = $result;
             
-            if ($this->countPosts() <= 0){
+            if ($counter <= 0){
                 $statement->free_result();
                 $statement->close();
+                echo "Post counter: ".$counter;
                 return FALSE;
             }
             
@@ -70,8 +80,6 @@ function getPosts(){
                 $tag .= "<form action=\"./deletePost.php\" method=\"POST\">";
                 $tag .= "<button type=\"submit\" name=\"deletePostID\" value=\"".$row["ID"]."\">Delete</button>";
                 $tag .= "</form>";
-                //Add form to delete specific POST. Go to "deletePost.php", check the author of the post
-                //to decide if you can delete the post or not
                 $tag .= '</li>';
                 $tag .= '<br>';
             }
@@ -86,7 +94,7 @@ function getPosts(){
         $statement->free_result();
         $statement->close();
     }else{
-//        echo "prepare error";
+        echo "prepare error";
         $res = FALSE;
     }
     
@@ -94,59 +102,80 @@ function getPosts(){
 }
 
 function getPostTitleByID($postID){
-        $query = "SELECT title FROM posts WHERE ID=?";
-
-        if ($statement = $this->sqliInstance->prepare($query)){
-            $statement->bind_param("i", $postID);
-            if ($statement->execute()){
-                $res = $statement->get_result();
-                return $res->fetch_assoc()["title"];
-            }else{
-                return NULL;
-            }
+    $query = "SELECT title FROM posts WHERE ID=?";
+    $result = NULL;
+    
+    if ($statement = $this->sqliInstance->prepare($query)){
+        $statement->bind_param("i", $postID);
+        if ($statement->execute()){
+            $res = $statement->get_result();
+            $result = $res->fetch_assoc()["title"];
         }else{
-            return NULL;
+            $result = NULL;
         }
+        
+        $statement->free_result();
+        $statement->close();
+    }else{
+        $result = NULL;
+    }
+    
+    return $result;
 }
 
 function getPostContentByID($postID){
-        $query = "SELECT content FROM posts WHERE ID=?";
-
-        if ($statement = $this->sqliInstance->prepare($query)){
-            $statement->bind_param("i", $postID);
-            if ($statement->execute()){
-                $res = $statement->get_result();
-                return $res->fetch_assoc()["content"];
-            }else{
-                return NULL;
-            }
+    $query = "SELECT content FROM posts WHERE ID=?";
+    $result = NULL;
+    
+    if ($statement = $this->sqliInstance->prepare($query)){
+        $statement->bind_param("i", $postID);
+        if ($statement->execute()){
+            $res = $statement->get_result();
+            $result = $res->fetch_assoc()["content"];
         }else{
-            return NULL;
+            $result = NULL;
         }
+        
+        $statement->free_result();
+        $statement->close();
+    }else{
+        $result = NULL;
+    }
+    
+    return $result;
 }
 
 function getPostDate($postID){
     $query = "SELECT date_creation AS date FROM posts WHERE ID=?";
-
-        if ($statement = $this->sqliInstance->prepare($query)){
-            $statement->bind_param("i", $postID);
-            if ($statement->execute()){
-                $res = $statement->get_result();
-                return $res->fetch_assoc()["date"];
-            }else{
-                return NULL;
-            }
+    $result = NULL;
+    
+    if ($statement = $this->sqliInstance->prepare($query)){
+        $statement->bind_param("i", $postID);
+        if ($statement->execute()){
+            $res = $statement->get_result();
+            $result = $res->fetch_assoc()["date"];
         }else{
-            return NULL;
+            $result = NULL;
         }
+        
+        $statement->free_result();
+        $statement->close();
+    }else{
+        $result = NULL;
+    }
+    
+    return $result;
 }
 
 function editPost($newTitle, $newContent, $postID, $newDate){
     if (empty($newTitle) || empty($newContent)){
         return FALSE;
     }
+    
+    $result = FALSE;
+    
     $query = "UPDATE posts SET title=?, content=?, date_creation=? WHERE ID=?";
-    $newDate2;
+//    $newDate2;
     if (empty($newDate)){
         //TO CHECK!!!!
         $newDate2 = (new DateTime(date("d-m-Y")))->format("U");
@@ -157,58 +186,81 @@ function editPost($newTitle, $newContent, $postID, $newDate){
     if ($statement = $this->sqliInstance->prepare($query)){
         $statement->bind_param("ssii", $newTitle, $newContent, $newDate2, $postID);
         if ($statement->execute()){
-            return TRUE;
+            $result = TRUE;
         }else{
-            return FALSE;
+            $result = FALSE;
         }
+        
+        $statement->free_result();
+        $statement->close();
     }else{
-        return FALSE;
+        $result = FALSE;
     }
+    
+    return $result;
+}
+
+function deletePost($postID){
+    $query = "DELETE FROM posts WHERE ID=?";
+    $res = FALSE;
+    
+    if ($statement = $this->sqliInstance->prepare($query)){
+        $statement->bind_param("i", $postID);
+        if ($statement->execute()){
+            $res = TRUE;
+        }else{
+            $res = FALSE;
+        }
+        
+        $statement->free_result();
+        $statement->close();
+    }else{
+        $res = FALSE;
+    }
+    
+    return $res;
 }
 
 function checkUserAuthor($post_ID, $author){
     $query = "SELECT author FROM posts WHERE ID=?";
+    $result = FALSE;
     
     if ($statement = $this->sqliInstance->prepare($query)){
         $statement->bind_param("i", $post_ID);
         if ($statement->execute()){
             $res = $statement->get_result();
             $auth = $res->fetch_assoc()["author"];
-            if (strcmp($auth, $author) == 0){
-                return TRUE;
-            }else{
-                return FALSE;
-            }
+            $result = (strcmp($auth, $author) == 0);
         }else{
-            return FALSE;
+            $result = FALSE;
         }
         
+        $statement->free_result();
+        $statement->close();
     }else{
-        return FALSE;
+        $result = FALSE;
     }
+    
+    return $result;
 }
 
 function addNewPost($author, $typeContent, $title, $content){
-//    if ($this->sqliInstance == null){
-//        return false;
-//    }
     $query = "INSERT INTO posts (ID, author, post_type, date_creation, title, content) VALUES ('', ?, ?, ?, ?, ?)";
     $res = FALSE;
+    
     if ($stmt = $this->sqliInstance->prepare($query)){
         $stmt->bind_param("ssiss", $author, $typeContent, time(), $title, $content);
         if($stmt->execute()){
             $res = TRUE;
         }else{
-//            echo "Execute error";
             $res = FALSE;;
         }
+        
+        $stmt->free_result();
+        $stmt->close();
     }else{
-//        echo "prepare error";
         $res = FALSE;;
     }
-    
-    $stmt->free_result();
-    $stmt->close();
     
     return $res;
 }

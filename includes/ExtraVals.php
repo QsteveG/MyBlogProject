@@ -16,7 +16,6 @@ class ExtraVals {
     const EMPTY_STRING = "empty";
     const USER_DOES_NOT_EXISTS = "no_user";
     const QUERY_ERROR = "query_error";
-//    const LENGTH_ZERO = "length_zero";
     const NOT_SUBMITTED = "not_submitted";
     const LOGIN_SUCCESS = "success";
     
@@ -32,5 +31,8 @@ class ExtraVals {
     
     const EDIT_SUCCESS = "editOK";
     const EDIT_FAIL = "editFailed";
+    
+    const DELETE_SUCCESS = "deleteOK";
+    const DELETE_FAIL = "deleteFailed";
     
 }

@@ -29,15 +29,12 @@ if($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST["submit"])){
         
         echo "Username: ".$username."<br><br>Password: ".$password."<br><br>";
         
-//        if (strlen($username) > 0 && strlen($password) > 0){
 
             $query = "SELECT COUNT(ID) AS counter FROM users WHERE username=? AND password=?";
-//            $query = "SELECT COUNT(ID) AS counter FROM users";
             if ($stmt = $mysqliInstance->prepare($query)){
                 $stmt->bind_param("ss", $username, $password);
                 $stmt->execute();
                 $result = $stmt->get_result();
-//                echo "Num rows: ".($result->fetch_assoc()["counter"]);
                 
                 if ($result->fetch_assoc()["counter"] == 1){
                     session_start();
@@ -48,37 +45,6 @@ if($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST["submit"])){
                     header("Location: ../index.php?login=".ExtraVals::USER_DOES_NOT_EXISTS);
                 }
                 
-                //RETURN RESULT FROM QUERY
-//                if ($row = $result->fetch_assoc()){
-//                    echo "User exits<br><br>";
-////                    LOGIN SUCCESS
-////                    header("Location: ../signedin.php?login=".ExtraVals::LOGIN_SUCCESS);
-//                        
-//                }else{
-//                    header("Location: ../index.php?login=".ExtraVals::USER_DOES_NOT_EXISTS);
-//                    echo "User DOES NOT exists<br><br>";
-//                }
-                
-                   //GET ROWS
-//                while ($row = $result->fetch_assoc()) {
-//                    echo $row["ID"]."<br><br>";
-//                }
-                                
-                
-                //ITERATE THROUGHT ELEMENT IN ARRAY
-//                echo "<br><br><br><br>";
-//                
-//                $i = 0;
-//                while ($row = $result->fetch_row()){
-////                    echo $row[$i]."<br><br>";
-//                    for ($i = 0; $i<count($row); $i++){
-//                        echo $row[$i]."<br>";
-//                    }
-//                    
-//                    $i = 0;
-//                    echo "<br><br>";
-//                }
-                
                 $stmt->free_result();
                 $stmt->close();
 
@@ -88,10 +54,6 @@ if($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST["submit"])){
             }
             
             $DBManager->DBDisconn();
-            
-//        }else{
-//            header("Location: ../index.php?login=".ExtraVals::LENGTH_ZERO);
-//        }
     }
         
 }else{
