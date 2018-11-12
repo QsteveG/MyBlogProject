@@ -22,7 +22,7 @@
     <body>
         
         <?php
-            require_once './LogoutHeader.php';
+            require_once './logoutHeader.php';
         ?>
         
         <h1>You logged in</h1>

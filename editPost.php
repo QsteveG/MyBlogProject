@@ -54,7 +54,7 @@ if (isset($_POST["editPostID"]) && !empty($_POST["editPostID"])){
     <body>
         
         <?php
-            require_once './LogoutHeader.php';
+            require_once './logoutHeader.php';
         ?>
         
         <h1>Edit post</h1>
